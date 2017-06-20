@@ -1,0 +1,2 @@
+select * from system_info;
+select instance_id, version from osquery_info;
