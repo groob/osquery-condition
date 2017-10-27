@@ -13,6 +13,7 @@ import (
 
 	"github.com/groob/plist"
 	osquery "github.com/kolide/osquery-go"
+	"github.com/pkg/errors"
 )
 
 var version = "dev"
@@ -53,7 +54,6 @@ func main() {
 	}
 	for r := range resp {
 		for k, v := range r {
-			fmt.Println(k, v)
 			conditions[fmt.Sprintf("osquery_%s", k)] = []string{v}
 		}
 	}
@@ -114,11 +114,11 @@ type MunkiConditions map[string][]string
 func (c *MunkiConditions) Load() error {
 	f, err := os.Open("/Library/Managed Installs/ConditionalItems.plist")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "load ConditionalItems plist")
 	}
 
 	if err := plist.NewDecoder(f).Decode(c); err != nil {
-		return err
+		return errors.Wrap(err, "decode ConditionalItems plist")
 	}
 	return f.Close()
 }
@@ -126,24 +126,13 @@ func (c *MunkiConditions) Load() error {
 func (c *MunkiConditions) Save() error {
 	f, err := os.OpenFile("/Library/Managed Installs/ConditionalItems.plist", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "open ConditionalItems plist for saving")
 	}
 
 	enc := plist.NewEncoder(f)
 	enc.Indent("  ")
 	if err := enc.Encode(c); err != nil {
-		return err
+		return errors.Wrap(err, "encode ConditionalItems plist")
 	}
 	return f.Close()
-}
-
-func getSocket() string {
-	if len(os.Args) < 2 {
-		fmt.Printf(`Usage: %s SOCKET_PATH QUERY\n
-
-Requests osqueryd to run the provided query and prints the results.
-`, os.Args[0])
-		os.Exit(1)
-	}
-	return os.Args[1]
 }
