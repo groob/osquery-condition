@@ -1,3 +1,4 @@
 osquery-condition
 build/
 *.zip
+vendor/

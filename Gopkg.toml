@@ -1,0 +1,7 @@
+[[constraint]]
+  branch = "master"
+  name = "github.com/groob/plist"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/kolide/osquery-go"
