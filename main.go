@@ -33,7 +33,7 @@ func main() {
 
 	var conditions MunkiConditions
 	if err := conditions.Load(); err != nil {
-		if os.IsNotExist(err) {
+		if os.IsNotExist(errors.Cause(err)) {
 			conditions = make(MunkiConditions)
 		} else {
 			log.Fatal(err)
